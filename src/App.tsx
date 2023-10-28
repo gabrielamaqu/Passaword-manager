@@ -20,11 +20,10 @@ function App() {
   return (
     <div>
       <Title />
-      <Form />
+      {mostrarFormulario && <Form onCancel={ cancelarFormularioHandler } />}
       {mostrarBotao && (
         <button onClick={ mostrarFormularioHandler }>Cadastrar nova senha</button>
       )}
-      {mostrarFormulario && <Form onCancel={ cancelarFormularioHandler } />}
     </div>
   );
 }
