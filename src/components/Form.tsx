@@ -73,18 +73,18 @@ function Form({ onCancel }: FormProps) {
       <input id="nome" type="text" name="nome" onChange={ handleNomeChange } />
 
       <label htmlFor="login"> Login </label>
-      <input id="login" type="text" value={ login } onChange={handleLoginChange} />
+      <input id="login" type="text" value={ login } onChange={ handleLoginChange } />
 
       <label htmlFor="password"> Senha </label>
-      <input id="password" type="password" value={ senha } onChange={handleSenhaChange} />
+      <input id="password" type="password" onChange={ handleSenhaChange } />
 
       <label htmlFor="url"> URL </label>
       <input id="url" type="text" name="url" />
 
-      <button data-testid="cadastrar-button" type="submit" disabled={!habilitarCadastrar}>
+      <button data-testid="cadastrar-btn" type="submit" disabled={ !habilitarCadastrar }>
         Cadastrar
       </button>
-      <button data-testid="cancelar-button" type="button" onClick={onCancel}>
+      <button data-testid="cancelar-button" type="button" onClick={ onCancel }>
         Cancelar
       </button>
     </form>
