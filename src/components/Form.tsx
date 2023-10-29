@@ -13,17 +13,15 @@ function Form({ onCancel }: FormProps) {
     const temCaractereEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senha);
     const temLetrasENumeros = /[a-zA-Z]/.test(senha) && /\d/.test(senha);
     const senhaValida = senha.length >= 8
-  && senha.length <= 16
-  && temCaractereEspecial
-  && temLetrasENumeros;
+    && senha.length <= 16
+    && temCaractereEspecial
+    && temLetrasENumeros;
     const habilitaCadastro = nomeParam !== ''
   && loginParam !== ''
   && senhaParam !== ''
   && senhaValida;
-
     setHabilitarCadastrar(habilitaCadastro);
   };
-
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const novoNome = event.target.value;
     setNome(novoNome);
@@ -66,22 +64,34 @@ function Form({ onCancel }: FormProps) {
       console.error('Erro durante o envio do formulário:', erro);
     }
   };
-
+  const getPasswordValidationClass = (isValid: boolean) => {
+    return isValid ? 'valid-password-check' : 'invalid-password-check';
+  };
   return (
     <form onSubmit={ handleSubmit }>
-      <label htmlFor="nome"> Nome do serviço </label>
+      <label htmlFor="nome">Nome do serviço</label>
       <input id="nome" type="text" name="nome" onChange={ handleNomeChange } />
 
-      <label htmlFor="login"> Login </label>
+      <label htmlFor="login">Login</label>
       <input id="login" type="text" value={ login } onChange={ handleLoginChange } />
 
-      <label htmlFor="password"> Senha </label>
+      <label htmlFor="password">Senha</label>
       <input id="password" type="password" onChange={ handleSenhaChange } />
-
-      <label htmlFor="url"> URL </label>
+      <label htmlFor="url">URL</label>
       <input id="url" type="text" name="url" />
-
-      <button data-testid="cadastrar-btn" type="submit" disabled={ !habilitarCadastrar }>
+      <div className={ getPasswordValidationClass(senha.length >= 8) }>
+        Possuir 8 ou mais caracteres
+      </div>
+      <div className={ getPasswordValidationClass(senha.length <= 16) }>
+        Possuir até 16 caracteres
+      </div>
+      <div className={ getPasswordValidationClass(/[a-zA-Z]/.test(senha) && /\d/.test(senha)) }>
+        Possuir letras e números
+      </div>
+      <div className={ getPasswordValidationClass(/[!@#$%^&*(),.?":{}|<>]/.test(senha)) }>
+        Possuir algum caractere especial
+      </div>
+      <button data-testid="cadastrar-b" type="submit" disabled={ !habilitarCadastrar }>
         Cadastrar
       </button>
       <button data-testid="cancelar-button" type="button" onClick={ onCancel }>
@@ -90,4 +100,5 @@ function Form({ onCancel }: FormProps) {
     </form>
   );
 }
+
 export default Form;
