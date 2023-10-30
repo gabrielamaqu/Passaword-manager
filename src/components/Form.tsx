@@ -1,27 +1,47 @@
+// Form.tsx
 import React, { useState } from 'react';
+
+interface Service {
+  id: number;
+  name: string;
+  login: string;
+  senha: string;
+  url: string;
+}
 
 interface FormProps {
   onCancel: () => void;
+  onAddService: (dadosDoFormulario: Service) => void;
 }
-function Form({ onCancel }: FormProps) {
+
+function Form({ onCancel, onAddService }: FormProps) {
   const [nome, setNome] = useState('');
   const [login, setLogin] = useState('');
   const [senha, setSenha] = useState('');
+  const [url, setUrl] = useState('');
+  const [mostrarFormulario, setMostrarFormulario] = useState(true);
   const [habilitarCadastrar, setHabilitarCadastrar] = useState(false);
+  const [esconderSenhas, setEsconderSenhas] = useState(false);
+  const [servicos, setServicos] = useState<Service[]>([]);
 
   const validarCampos = (nomeParam: string, loginParam: string, senhaParam: string) => {
-    const temCaractereEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senha);
-    const temLetrasENumeros = /[a-zA-Z]/.test(senha) && /\d/.test(senha);
-    const senhaValida = senha.length >= 8
-    && senha.length <= 16
-    && temCaractereEspecial
-    && temLetrasENumeros;
-    const habilitaCadastro = nomeParam !== ''
-  && loginParam !== ''
-  && senhaParam !== ''
-  && senhaValida;
+    const temCaractereEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(senhaParam);
+    const temLetrasENumeros = /[a-zA-Z]/.test(senhaParam) && /\d/.test(senhaParam);
+    const senhaValida = (
+      senhaParam.length >= 8
+      && senhaParam.length <= 16
+      && temCaractereEspecial
+      && temLetrasENumeros
+    );
+    const habilitaCadastro = (
+      nomeParam !== ''
+      && loginParam !== ''
+      && senhaParam !== ''
+      && senhaValida
+    );
     setHabilitarCadastrar(habilitaCadastro);
   };
+
   const handleNomeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const novoNome = event.target.value;
     setNome(novoNome);
@@ -40,33 +60,38 @@ function Form({ onCancel }: FormProps) {
     validarCampos(nome, login, novaSenha);
   };
 
+  const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const novaUrl = event.target.value;
+    setUrl(novaUrl);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const dadosDoFormulario = {
-      nome,
+    const dadosDoFormulario: Service = {
+      id: servicos.length + 1,
+      name: nome,
       login,
       senha,
+      url,
     };
-    try {
-      const resposta = await fetch('URL_DO_SEU_ENDPOINT_API', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dadosDoFormulario),
-      });
-      if (resposta.ok) {
-        console.log('Dados do formulário enviados com sucesso!');
-      } else {
-        console.error('Erro ao enviar dados do formulário ao servidor.');
-      }
-    } catch (erro) {
-      console.error('Erro durante o envio do formulário:', erro);
-    }
+
+    // Adiciona o novo serviço usando a propriedade onAddService
+    onAddService(dadosDoFormulario);
+
+    // Resetar o formulário
+    setNome('');
+    setLogin('');
+    setSenha('');
+    setUrl('');
+
+    // Esconder o formulário
+    setMostrarFormulario(false);
   };
+
   const getPasswordValidationClass = (isValid: boolean) => {
     return isValid ? 'valid-password-check' : 'invalid-password-check';
   };
+
   return (
     <form onSubmit={ handleSubmit }>
       <label htmlFor="nome">Nome do serviço</label>
@@ -78,7 +103,7 @@ function Form({ onCancel }: FormProps) {
       <label htmlFor="password">Senha</label>
       <input id="password" type="password" onChange={ handleSenhaChange } />
       <label htmlFor="url">URL</label>
-      <input id="url" type="text" name="url" />
+      <input id="url" type="text" name="url" value={ url } onChange={ handleUrlChange } />
       <div className={ getPasswordValidationClass(senha.length >= 8) }>
         Possuir 8 ou mais caracteres
       </div>
@@ -91,9 +116,15 @@ function Form({ onCancel }: FormProps) {
       <div className={ getPasswordValidationClass(/[!@#$%^&*(),.?":{}|<>]/.test(senha)) }>
         Possuir algum caractere especial
       </div>
-      <button data-testid="cadastrar-b" type="submit" disabled={ !habilitarCadastrar }>
+
+      <button
+        data-testid="cadastrar-b"
+        type="submit"
+        disabled={ !habilitarCadastrar }
+      >
         Cadastrar
       </button>
+
       <button data-testid="cancelar-button" type="button" onClick={ onCancel }>
         Cancelar
       </button>
