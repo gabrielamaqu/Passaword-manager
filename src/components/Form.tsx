@@ -12,9 +12,15 @@ interface Service {
 interface FormProps {
   onCancel: () => void;
   onAddService: (dadosDoFormulario: Service) => void;
+  hidePasswords: boolean; // Novo estado para esconder senhas
+  onToggleHidePasswords: () => void; // Função para alternar o estado
 }
 
-function Form({ onCancel, onAddService }: FormProps) {
+function Form({
+  onCancel,
+  onAddService,
+  hidePasswords,
+  onToggleHidePasswords }: FormProps) {
   const [nome, setNome] = useState('');
   const [login, setLogin] = useState('');
   const [senha, setSenha] = useState('');
@@ -104,6 +110,15 @@ function Form({ onCancel, onAddService }: FormProps) {
       <input id="password" type="password" onChange={ handleSenhaChange } />
       <label htmlFor="url">URL</label>
       <input id="url" type="text" name="url" value={ url } onChange={ handleUrlChange } />
+      <label htmlFor="esconderSenhasCheckbox">
+        <input
+          id="esconderSenhasCheckbox"
+          type="checkbox"
+          checked={ hidePasswords }
+          onChange={ onToggleHidePasswords }
+        />
+        Esconder senhas
+      </label>
       <div className={ getPasswordValidationClass(senha.length >= 8) }>
         Possuir 8 ou mais caracteres
       </div>

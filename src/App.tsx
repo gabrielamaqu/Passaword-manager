@@ -17,12 +17,7 @@ function App() {
   const [mostrarBotao, setMostrarBotao] = useState(true);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [servicos, setServicos] = useState<Service[]>([]);
-  const [esconderSenhas, setEsconderSenhas] = useState(false);
-  const [showPasswords, setShowPasswords] = useState(false);
-
-  const toggleShowPasswords = () => {
-    setShowPasswords(!showPasswords);
-  };
+  const [esconderSenhas, setEsconderSenhas] = useState(false); // Novo estado
 
   const mostrarFormularioHandler = () => {
     setMostrarBotao(false);
@@ -47,6 +42,10 @@ function App() {
     cancelarFormularioHandler();
   };
 
+  const toggleHidePasswords = () => {
+    setEsconderSenhas(!esconderSenhas);
+  };
+
   return (
     <div>
       <Title />
@@ -54,6 +53,8 @@ function App() {
         <Form
           onCancel={ cancelarFormularioHandler }
           onAddService={ adicionarServico }
+          hidePasswords={ esconderSenhas }
+          onToggleHidePasswords={ toggleHidePasswords }
         />
       )}
       {mostrarBotao && (
@@ -80,7 +81,7 @@ function App() {
             <p>
               Senha:
               <span className={ esconderSenhas ? 'senha-escondida' : '' }>
-                {service.senha}
+                {esconderSenhas ? '******' : service.senha}
               </span>
             </p>
             {/* Botão para remover o serviço */}
